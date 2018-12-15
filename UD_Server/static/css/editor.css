@@ -1,0 +1,18 @@
+.Tile {
+    width: 30px;
+    height: 30px;
+    border: 1px solid orange;
+    position: absolute;
+}
+.Tile:hover {
+    cursor: pointer;
+}
+.Tile_Block {
+    background-color: #1a1a1a;
+}
+.Tile_Grass {
+    background-color: #1c7430;
+}
+.TileSelected {
+    border: 3px solid orange;
+}

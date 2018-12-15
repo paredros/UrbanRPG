@@ -1,0 +1,165 @@
+{% load staticfiles %}
+{% load world_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static "css/editor.css" %}">
+    <link rel="stylesheet" href="{% static "css/spaces.css" %}">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <form id="BuilderForm">
+                        <div class="form-group">
+                            <label for="sizeX">Size X</label>
+                            <input type="number" class="form-control" id="sizeX" aria-describedby="sizeXHelp" placeholder="Enter X" value="23">
+                            <small id="sizeXHelp" class="form-text text-muted">X Size</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sizeY">Size Y</label>
+                            <input type="number" class="form-control" id="sizeY" aria-describedby="sizeYHelp" placeholder="Enter Y" value="23">
+                            <small id="sizeYHelp" class="form-text text-muted">Y Size</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Build</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div id="brush0" class="Tile Tile_Block TileSelected" style="left: 10px" onclick="selectBrush(0)"></div>
+                    <div id="brush1" class="Tile Tile_Grass" style="left: 50px" onclick="selectBrush(1)"></div>
+                    <p></p>
+                </div>
+            </div>
+            <div class="Space-25"></div>
+            <button type="button" class="btn btn-primary" onclick="saveMap()">Save</button>
+        </div>
+        <div class="col-lg-10">
+            <div id="MapHolder" style="overflow:scroll;width: 100%;height: 100vh">
+                {% comment %}
+                {% for y in 'yyyyyyyyyyy' %}
+                    {% for x in 'xxxxxxxxxxxxx' %}
+                        <div id="tile-{{ forloop.counter0 }}-{{ forloop.parentloop.counter0 }}" class="Tile" style="
+                                    left: {{ forloop.counter0|multiply:30}}px;
+                                    top: {{ forloop.parentloop.counter0|multiply:30}}px;"
+                                    onclick="clickOn({{ forloop.counter0 }},{{ forloop.parentloop.counter0 }})">
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% endcomment %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+
+<script>
+    $( "#BuilderForm" ).submit(function( event ) {
+
+        //data = $("#BuilderForm").serializeArray();
+        //alert($("#BuilderForm #sizeX").valueOf())
+        var sizeX = $("#BuilderForm #sizeX").val();
+        var sizeY = $("#BuilderForm #sizeY").val();
+        buildMap(sizeX,sizeY)
+        //alert( "Size:" + data.sizeX + "," +data.sizeY );
+        event.preventDefault();
+    });
+
+    function clickOn(x,y) {
+        //alert("CLICK:"+x+","+y)
+        mapa[y][x]=SelectedBrush;
+        $('#tile-'+x+'-'+y).removeClass("Tile_Block");
+        $('#tile-'+x+'-'+y).removeClass("Tile_Grass");
+        if(SelectedBrush==0){
+            $('#tile-'+x+'-'+y).addClass("Tile_Block");
+        }else if(SelectedBrush==1){
+            $('#tile-'+x+'-'+y).addClass("Tile_Grass");
+        }
+    }
+    var mapa= [];
+    function buildMap(sx,sy) {
+        $("#MapHolder").empty();
+        mapa= new Array(sy);
+        for(var y=0;y<sy;y++){
+            mapa[y] = new Array(sx);
+            for(var x=0;x<sx;x++){
+                mapa[y][x] = 0;
+                $("#MapHolder").append(generateItem(x,y,0));
+            }
+        }
+    }
+    var SelectedBrush = 0;
+    function selectBrush(tipo) {
+        SelectedBrush=tipo;
+        for(var i=0;i<2;i++){
+            $("#brush"+i).removeClass("TileSelected")
+        }
+        $("#brush"+tipo).addClass("TileSelected")
+    }
+    function saveMap() {
+        var JSONmapa = JSON.stringify(mapa);
+        $.ajax({
+            url : "mapeditor/savemap", // the endpoint
+            type : "POST", // http method
+            data : { 'mapa' : JSONmapa,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            }, // data sent with the post request
+
+            // handle a successful response
+            success : function(json) {
+                //$('#post-text').val(''); // remove the value from the input
+                console.log(json); // log the returned json to the console
+                console.log("success"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    function InitWithData() {
+        mapa = {{ mapa }};
+        var sy = mapa.length;
+        var sx = mapa[0].length;
+        $("#BuilderForm #sizeX").val(sx);
+        $("#BuilderForm #sizeY").val(sy);
+        $("#MapHolder").empty();
+        for(var y=0;y<sy;y++){
+            for(var x=0;x<sx;x++){
+                $("#MapHolder").append(generateItem(x,y,mapa[y][x]));
+            }
+        }
+    }
+    function generateItem(x, y, tipo){
+        var r = '<div id="tile-'+x+'-'+y+'" class="Tile '
+        if(tipo==0){
+            r+="Tile_Block";
+        }else if(tipo==1){
+            r+="Tile_Grass";
+        }
+        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;"' + 'onclick="clickOn('+x+','+y+')">' + '</div>';
+        return r;
+    }
+    InitWithData()
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+ToDo:
+[ ] Hacer la vista testeo del cliente
+    [ ] Levantar la info del modelo de world
+    [ ] Elegir una coordenada para arrancar
+    [ ] Elegir direccion de vista
+    [ ] Dibujar el Mapa 3D entero en bloques
+    [ ] Posicionar en Coordenada Inicial y direccion de vista
+    [ ] Hacer que pueda girar
+    [ ] Hacer que pueda caminar
+    [ ] Control de colision
+
+
+
+
+
+-----------------
+DONE
