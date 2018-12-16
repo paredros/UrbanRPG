@@ -1,13 +1,20 @@
 ToDo:
 [ ] Hacer la vista testeo del cliente
-    [ ] Levantar la info del modelo de world
-    [ ] Elegir una coordenada para arrancar
-    [ ] Elegir direccion de vista
-    [ ] Dibujar el Mapa 3D entero en bloques
-    [ ] Posicionar en Coordenada Inicial y direccion de vista
-    [ ] Hacer que pueda girar
-    [ ] Hacer que pueda caminar
-    [ ] Control de colision
+    [ ] Poner textura en la pared
+    [ ] Poner piso
+    [ ] Poner Cielo
+--
+[ ] Mas Tiles
+    [ ] Hacer distintos tipos de Tiles
+    [ ] Ponerles Propiedades de Caminable o no
+    [ ] Crear Objeto de Propiedades de Tile
+    [ ] Poner Techo en la vista 3D cuando corresponde
+--
+[ ] Efectos
+    [ ] Probar pixelar la vista
+--
+[ ] UI
+    [ ] Hacer Botones Para Mover
 
 
 
@@ -15,3 +22,12 @@ ToDo:
 
 -----------------
 DONE
+
+[x] Levantar la info del modelo de world
+[x] Elegir una coordenada para arrancar
+[x] Elegir direccion de vista
+[x] Dibujar el Mapa 3D entero en bloques
+[x] Posicionar en Coordenada Inicial y direccion de vista
+[x] Hacer que pueda girar
+[x] Hacer que pueda caminar
+[x] Control de colision

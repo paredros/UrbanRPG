@@ -9,13 +9,22 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
-    <script src="{% static 'jsgl/testwebgl.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+    <script src="{% static 'jsgl/clientview.js' %}"></script>
+    <script src="{% static 'js/keyboardcontrol.js' %}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
 </head>
 <body>
 
     <script>
         $(document).ready(function(){
            //código a ejecutar cuando el DOM está listo para recibir instrucciones.
+            props={{ props | safe }};
+            MAPA={{ map }};
+            FN_LEFT=RotateLeft;
+            FN_RIGHT=RotateRight;
+            FN_UP=MoveFW;
+            FN_DOWN=MoveBW;
             init();
             animate();
         });
