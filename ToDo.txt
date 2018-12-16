@@ -1,8 +1,6 @@
 ToDo:
 [ ] Hacer la vista testeo del cliente
-    [ ] Poner textura en la pared
-    [ ] Poner piso
-    [ ] Poner Cielo
+
 --
 [ ] Mas Tiles
     [ ] Hacer distintos tipos de Tiles
@@ -31,3 +29,7 @@ DONE
 [x] Hacer que pueda girar
 [x] Hacer que pueda caminar
 [x] Control de colision
+[x] Poner textura en la pared
+[x] Poner piso
+[x] Poner Cielo
+    [x] Probar poner esfera con gradient

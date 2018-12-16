@@ -9,27 +9,36 @@ var ONTWEEN = false;
 var ROTASPEED = 200;
 var WALKSPEED = 200;
 
-function init() {
+var TEXTURES ={};
 
-    camera = new THREE.PerspectiveCamera(70, VIEW_W / VIEW_H, 0.01, 10);
+function init() {
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    camera = new THREE.PerspectiveCamera(70, VIEW_W / VIEW_H, 0.0001, 1000);
     camera.position.z = props.y;
     camera.position.x = props.x;
     camera.position.y = 0;
     var inirot =getRandomInt(4);
     if(inirot==0){
-        camera.position.y=0;
+        camera.rotation.y=0;
     }else if(inirot==1){
-        camera.position.y=THREE.Math.degToRad(90);
+        camera.rotation.y=THREE.Math.degToRad(90);
     }else if(inirot==2){
-        camera.position.y=THREE.Math.degToRad(-90);
+        camera.rotation.y=THREE.Math.degToRad(-90);
     }else if(inirot==4){
-        camera.position.y=THREE.Math.degToRad(180);
+        camera.rotation.y=THREE.Math.degToRad(180);
     }
 
     scene = new THREE.Scene();
 
     geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    material = new THREE.MeshNormalMaterial();
+    //material = new THREE.MeshNormalMaterial();
+    //TEXTURES[0].wrapS = TEXTURES[0].wrapT = THREE.RepeatWrapping;
+    //TEXTURES[0].anisotropy = renderer.capabilities.getMaxAnisotropy();
+    material = new THREE.MeshPhongMaterial({map: TEXTURES["WALL1"], bumpMap:TEXTURES["WALL1"],shading: THREE.FlatShading});
+    //material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+
+    floor1 = new THREE.PlaneGeometry( 1, 1 );
+    floorMat = new THREE.MeshPhongMaterial({map: TEXTURES["FLOOR1"], bumpMap:TEXTURES["FLOOR1"],shading: THREE.FlatShading,side: THREE.DoubleSide});
 
     for(var y = 0;y<props.height;y++){
         for(var x = 0;x<props.width;x++){
@@ -38,18 +47,37 @@ function init() {
                 mesh.position.x = x;
                 mesh.position.z = y;
                 scene.add(mesh);
+            }else {
+                var mesh = new THREE.Mesh(floor1, floorMat);
+                mesh.position.x = x;
+                mesh.position.z = y;
+                mesh.position.y = -0.5;
+                mesh.rotation.x = THREE.Math.degToRad(90)
+                scene.add(mesh);
             }
         }
     }
+    CubeColor();
 
+    var ambientLight = new THREE.AmbientLight(0x999999 );
+    scene.add(ambientLight);
 
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    var lights = [];
+    lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
+    lights[0].position.set( 1, 0, 0 );
+    lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
+    lights[1].position.set( 0.75, 1, 0.5 );
+    lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
+    lights[2].position.set( -0.75, -1, 0.5 );
+    scene.add( lights[0] );
+    scene.add( lights[1] );
+    scene.add( lights[2] );
     renderer.setSize( VIEW_W, VIEW_H);
+
     document.body.appendChild( renderer.domElement );
 }
 
 function animate(ts) {
-
     requestAnimationFrame( animate );
     TWEEN.update(ts);
     //mesh.rotation.x += 0.01;
@@ -155,3 +183,58 @@ THREE.Utils = {
         return vector;
     }
 };
+
+
+function CubeColor() {
+    var vertexColorMaterial = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors,side: THREE.DoubleSide } );
+
+    var color, point, face, numberOfSides, vertexIndex;
+
+    // faces are indexed using characters
+    var faceIndices = [ 'a', 'b', 'c', 'd' ];
+
+    var size = 100;
+    var cubeGeometry = new THREE.CubeGeometry( size, size, size );
+
+    // first, assign colors to vertices as desired
+    for ( var i = 0; i < cubeGeometry.vertices.length; i++ )
+    {
+        point = cubeGeometry.vertices[ i ];
+        color = new THREE.Color( 0xffffff );
+        //color.setRGB( 0.5 + point.x / size, 0.5 + point.y / size, 0.5 + point.z / size );
+        //console.log(0.5+point.x / size)
+        //var col = 0.5+point.x / size;
+        //color.setHSL(0.2+(col*0.5),1,0.5)
+        if(point.x<0){
+            if(point.y<0){
+                color.setHex(0x000000);
+            }else {
+                color.setHex(0x330033);
+            }
+        }else{
+            if(point.y<0){
+                color.setHex(0x000000);
+            }else {
+                color.setHex(0x003333);
+            }
+        }
+        cubeGeometry.colors[i] = color; // use this array for convenience
+    }
+
+    // copy the colors to corresponding positions
+    //     in each face's vertexColors array.
+    for ( var i = 0; i < cubeGeometry.faces.length; i++ )
+    {
+        face = cubeGeometry.faces[ i ];
+        numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+        for( var j = 0; j < numberOfSides; j++ )
+        {
+            vertexIndex = face[ faceIndices[ j ] ];
+            face.vertexColors[ j ] = cubeGeometry.colors[ vertexIndex ];
+        }
+    }
+
+    cube = new THREE.Mesh( cubeGeometry, vertexColorMaterial );
+    cube.y=size;
+    scene.add(cube);
+}
