@@ -6,9 +6,11 @@ from .models import *
 def Mapeditor(request):
     #data = MapWorld.objects.filter(pk=1)[0]
     list = MapWorld.objects.all().values('pk','mapName')
+    walkables = Walkables.objects.all()
     print(list)
     #return render(request, 'editor/mapeditor.html', {'mapa':data.mapData, 'mapsList':list})
-    return render(request, 'editor/mapeditor.html', {'mapsList':list})
+    return render(request, 'editor/mapeditor.html', {'mapsList':list,
+                                                     'walkables':walkables})
 
 def multiply(value, arg):
     return value*arg

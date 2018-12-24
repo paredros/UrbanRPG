@@ -14,3 +14,4 @@ class TestModelAdmin(admin.ModelAdmin):
 admin.site.register(TestModel,TestModelAdmin)
 
 admin.site.register(MapWorld)
+admin.site.register(Walkables)
