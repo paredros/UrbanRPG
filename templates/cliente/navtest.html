@@ -21,12 +21,34 @@
            //código a ejecutar cuando el DOM está listo para recibir instrucciones.
             props={{ props | safe }};
             MAPA={{ map }};
+            SOLIDS = {{ mapsolids }}
             FN_LEFT=RotateLeft;
             FN_RIGHT=RotateRight;
             FN_UP=MoveFW;
             FN_DOWN=MoveBW;
 
-            var loader = new THREE.TextureLoader();
+            {% for wlk in walkables %}
+                WALKABLES['{{ wlk.pk }}']={
+                    'colorId':"{{ wlk.colorId }}",
+                    'isWalkable':"{{ wlk.isWalkable }}",
+                    'velocity':{{ wlk.velocity }}
+                };
+            {% endfor %}
+
+            {% for sld in solids %}
+                SOLIDS_OBJS['{{ sld.pk }}'] = {
+                    'url':"{{ sld.imgBase.url }}",
+                    'type':"{{ sld.type }}"
+                };
+                var loader = new THREE.TextureLoader();
+                loader.load('{{ sld.imgBase.url }}', function ( texture ) {
+                    texture.magFilter=THREE.NearestFilter;
+                    texture.minFilter=THREE.NearestFilter;
+                    TEXTURES["{{ sld.pk }}"]=texture;
+                });
+            {% endfor %}
+
+            /*var loader = new THREE.TextureLoader();
             loader.load('{% static "textures/wall1.png" %}', function ( texture ) {
                 texture.magFilter=THREE.NearestFilter;
                 texture.minFilter=THREE.NearestFilter;
@@ -37,7 +59,8 @@
                 texture.magFilter=THREE.NearestFilter;
                 texture.minFilter=THREE.NearestFilter;
                 TEXTURES["FLOOR1"]=texture;
-            });
+            });*/
+
             THREE.DefaultLoadingManager.onLoad = function ( ) {
                 PreInit();
             };

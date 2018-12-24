@@ -49,6 +49,7 @@ def LoadMap(request):
         response_data['result'] = 'Loaded'
         response_data['pk'] = data.pk
         response_data['mapa'] = data.mapData
+        response_data['mapasolids'] = data.mapSolids
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)

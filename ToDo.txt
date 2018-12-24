@@ -19,8 +19,13 @@ ToDo:
     [x] Poner Lista Selectora para Cargar
     [x] Si voy a crear ponerle un nombre
 [ ] Tener Layers
-    [ ] Separar el Tile clickeable del del arte, asi responde al layer selected
+    [x] Separar el Tile clickeable del del arte, asi responde al layer selected
         [x] Probar primero solo con el walkable
+    [x] Poner Layer de Solidos
+    [x] Levantar en la vista de juego los layers
+    [x] En la vista de Juego levantar texturas de la DB
+    [x] Convertir la creacion de Geometrias a que sean dinamicas tambien
+    [ ] Pasar el posicionamiento de la geometria de acuerdo al tipo
 [ ] Poner Punto De Inicio a Mano
 [ ] Poder Cargar y Grabar distintos
 [ ] Mas Tiles

@@ -5,7 +5,10 @@ import json
 
 # Create your views here.
 def worldnavigation(request):
-    data = MapWorld.objects.filter(pk=1)[0]
+    data = MapWorld.objects.first()
+    walkables = Walkables.objects.all()
+    solids = Solids.objects.all()
+
     mapa = json.loads(data.mapData)
     print(mapa[0][0])
     height=len(mapa)
@@ -25,5 +28,8 @@ def worldnavigation(request):
             e=True
 
     return render(request, 'cliente/navtest.html', {'map':data.mapData,
-                                                    'props':props
+                                                    'props':props,
+                                                    'mapsolids':data.mapSolids,
+                                                    'walkables': walkables,
+                                                    'solids': solids
                                                     })

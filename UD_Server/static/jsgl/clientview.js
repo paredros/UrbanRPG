@@ -1,7 +1,8 @@
 var camera, scene, renderer;
 var geometry, material, mesh;
 var MAPA=[];
-var props={}
+var SOLIDS=[];
+var props={};
 
 var VIEW_W=320;
 var VIEW_H=240;
@@ -10,6 +11,12 @@ var ROTASPEED = 200;
 var WALKSPEED = 200;
 
 var TEXTURES ={};
+var MATERIALS  ={};
+
+var WALKABLES = {};
+var SOLIDS_OBJS = {}
+
+
 
 function init() {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -30,25 +37,38 @@ function init() {
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    WALL_BASE = new THREE.BoxGeometry( 1, 1, 1 );
     //material = new THREE.MeshNormalMaterial();
     //TEXTURES[0].wrapS = TEXTURES[0].wrapT = THREE.RepeatWrapping;
     //TEXTURES[0].anisotropy = renderer.capabilities.getMaxAnisotropy();
-    material = new THREE.MeshPhongMaterial({map: TEXTURES["WALL1"], bumpMap:TEXTURES["WALL1"],shading: THREE.FlatShading});
-    //material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
 
-    floor1 = new THREE.PlaneGeometry( 1, 1 );
-    floorMat = new THREE.MeshPhongMaterial({map: TEXTURES["FLOOR1"], bumpMap:TEXTURES["FLOOR1"],shading: THREE.FlatShading,side: THREE.DoubleSide});
+    for (var obj in SOLIDS_OBJS){
+        console.log(SOLIDS_OBJS[obj]);
+        if(SOLIDS_OBJS[obj].type=="WALL") {
+            MATERIALS[obj] = new THREE.MeshPhongMaterial({
+                map: TEXTURES[obj],
+                bumpMap: TEXTURES[obj],
+                shading: THREE.FlatShading
+            });
+        }else if(SOLIDS_OBJS[obj].type=="FLOOR"){
+            MATERIALS[obj] = new THREE.MeshPhongMaterial({map: TEXTURES[obj], bumpMap:TEXTURES[obj],shading: THREE.FlatShading,side: THREE.DoubleSide});
+        }
+    }
+    //material = new THREE.MeshPhongMaterial({map: TEXTURES["1"], bumpMap:TEXTURES["1"],shading: THREE.FlatShading});
+    ////material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+
+    FLOOR_BASE = new THREE.PlaneGeometry( 1, 1 );
+    //floorMat = new THREE.MeshPhongMaterial({map: TEXTURES["2"], bumpMap:TEXTURES["2"],shading: THREE.FlatShading,side: THREE.DoubleSide});
 
     for(var y = 0;y<props.height;y++){
         for(var x = 0;x<props.width;x++){
-            if(MAPA[y][x]==0) {
-                var mesh = new THREE.Mesh(geometry, material);
+            if(SOLIDS[y][x]==0) {
+                var mesh = new THREE.Mesh(WALL_BASE, MATERIALS[SOLIDS[y][x]+1]);
                 mesh.position.x = x;
                 mesh.position.z = y;
                 scene.add(mesh);
-            }else {
-                var mesh = new THREE.Mesh(floor1, floorMat);
+            }else if(SOLIDS[y][x]==1){
+                var mesh = new THREE.Mesh(FLOOR_BASE, MATERIALS[SOLIDS[y][x]+1]);
                 mesh.position.x = x;
                 mesh.position.z = y;
                 mesh.position.y = -0.5;

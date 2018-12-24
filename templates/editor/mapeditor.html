@@ -110,6 +110,11 @@
                 <div class="card-body">
                     Solids
                     <div class="Space-10"></div>
+                    <div class="row">
+                        <div id="solid_brush0" class="Pallete" style="background-color: black" onclick="selectSolid(0)">
+                        </div>
+                        &nbsp;<small>Erase</small>
+                    </div>
                     {% for sld in solids %}
                         <div class="row">
                             <div id="solid_brush{{ sld.pk }}" class="Pallete" style="background-image: URL('{{ sld.imgBase.url }}')" onclick="selectSolid({{ sld.pk }})">
@@ -117,6 +122,7 @@
                             &nbsp;<small>{{ sld.name }}</small>
                         </div>
                     {% endfor %}
+
                 </div>
             </div>
             <div class="Space-25"></div>
@@ -124,6 +130,8 @@
         </div>
         <div class="col-lg-10">
             <div id="MapHolder_Walkables" style="overflow:scroll;width: 100%;height: 100vh">
+            </div>
+            <div id="MapHolder_Solidos" style="overflow:scroll;width: 100%;height: 100vh; opacity: 0.3">
             </div>
             <div id="MapHolder" style="overflow:scroll;width: 100%;height: 100vh">
                 {% comment %}
@@ -199,27 +207,42 @@
         if(lay==0){
             $('#LayerEditingLabel').text("Walkable");
             $("#MapHolder_Walkables").css('opacity',1)
+            $("#MapHolder_Solidos").css('opacity',0.3);
         }else if(lay==1){
             $('#LayerEditingLabel').text("Solids");
-            $("#MapHolder_Walkables").css('opacity',0.3)
+            $("#MapHolder_Walkables").css('opacity',0.3);
+            $("#MapHolder_Solidos").css('opacity',1);
         }
     }
     function clickOn(x,y) {
         if(SelectedLayer==0){
             mapa[y][x]=SelectedWalkable;
             $('#tileWalkable-'+x+'-'+y).css('background-color', WALKABLES_COLORS[SelectedWalkable+1].colorId);
+        }else if(SelectedLayer==1){
+            //console.log(SelectedSolid +":" + SOLIDS_URLS[SelectedSolid+1].url);
+            CURRENT_MAPA_SOLIDS[y][x]=SelectedSolid;
+            if(SelectedSolid==-1){
+                $('#tileSolid-' + x + '-' + y).css('background-image','none');
+            }else {
+                $('#tileSolid-' + x + '-' + y).css('background-image', 'url(' + SOLIDS_URLS[SelectedSolid + 1].url + ')');
+            }
         }
     }
 
     function buildMap(sx,sy) {
 
         $("#MapHolder").empty();
+        $("#MapHolder_Walkables").empty();
         mapa= new Array(sy);
+        CURRENT_MAPA_SOLIDS = new Array(sy);
         for(var y=0;y<sy;y++){
             mapa[y] = new Array(sx);
+            CURRENT_MAPA_SOLIDS[y] = new Array(sx);
             for(var x=0;x<sx;x++){
                 mapa[y][x] = 0;
+                CURRENT_MAPA_SOLIDS[y][x] = -1;
                 $("#MapHolder").append(generateItemClickable(x,y,0));
+                $("#MapHolder_Walkables").append(generateItemWalkable(x,y,0));
             }
         }
     }
@@ -230,9 +253,12 @@
         $("#BuilderForm #sizeX").val(sx);
         $("#BuilderForm #sizeY").val(sy);
         $("#MapHolder").empty();
+        $("#MapHolder_Walkables").empty();
+        $("#MapHolder_Solidos").empty();
         for(var y=0;y<sy;y++){
             for(var x=0;x<sx;x++){
                 $("#MapHolder_Walkables").append(generateItemWalkable(x,y,mapa[y][x]));
+                $("#MapHolder_Solidos").append(generateItemSolid(x,y,CURRENT_MAPA_SOLIDS[y][x]));
                 $("#MapHolder").append(generateItemClickable(x,y,mapa[y][x]));
             }
         }
@@ -244,10 +270,21 @@
         return r;
     }
     function generateItemWalkable(x, y, tipo){
-        var r = '<div id="tileWalkable-'+x+'-'+y+'" class="Tile '
+        var r = '<div id="tileWalkable-'+x+'-'+y+'" class="TileBase '
         r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
         r+='background-color:'+WALKABLES_COLORS[(tipo+1)].colorId+';"'
-        r+= 'onclick="clickOn('+x+','+y+')">' + '</div>';
+        r+= '</div>';
+        return r;
+    }
+    function generateItemSolid(x, y, tipo){
+        var r = '<div id="tileSolid-'+x+'-'+y+'" class="TileBase '
+        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
+        if(tipo!=-1){
+            r+='background-image:URL('+SOLIDS_URLS[(tipo+1)].url+');"';
+        }else{
+            r+='"';
+        }
+        r+= '</div>';
         return r;
     }
     function selectWalkable(tipo) {
@@ -268,10 +305,12 @@
             return;
         }
         var JSONmapa = JSON.stringify(mapa);
+        var JSONmapaSolid = JSON.stringify(CURRENT_MAPA_SOLIDS);
         $.ajax({
             url : "mapeditor/savemap", // the endpoint
             type : "POST", // http method
             data : { 'mapa' : JSONmapa,
+                'mapasolids' : JSONmapaSolid,
                 'id':CURRENT_PK,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
@@ -309,6 +348,7 @@
                 if(json.result=="Loaded"){
                     CURRENT_PK = json.pk;
                     CURRENT_NAME = json.name;
+                    CURRENT_MAPA_SOLIDS = $.parseJSON(json.mapasolids);
                     InitWithData($.parseJSON(json.mapa));
                     STATUS = "LOADED";
                 }
