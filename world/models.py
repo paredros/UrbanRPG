@@ -9,6 +9,10 @@ class TestModel(models.Model):
 class MapWorld(models.Model):
     mapName = models.CharField(max_length=255)
     mapData = models.TextField(null=True, blank=True)
+    mapSolids = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.mapName
 
 class Walkables(models.Model):
     name = models.CharField(max_length=255)
@@ -36,4 +40,7 @@ class Solids(models.Model):
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=30,choices=SOLID_CHOICES,default="WALL")
     imgBase = models.ImageField(upload_to='textures/', null=True)
+
+    def __str__(self):
+        return self.name
 

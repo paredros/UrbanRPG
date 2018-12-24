@@ -15,10 +15,12 @@ ToDo:
 [ ] Hacer Arma Bola Magica
 
 --
-[ ] Hacer nueva Version de Mapa
+[x] Hacer nueva Version de Mapa
     [x] Poner Lista Selectora para Cargar
     [x] Si voy a crear ponerle un nombre
 [ ] Tener Layers
+    [ ] Separar el Tile clickeable del del arte, asi responde al layer selected
+        [x] Probar primero solo con el walkable
 [ ] Poner Punto De Inicio a Mano
 [ ] Poder Cargar y Grabar distintos
 [ ] Mas Tiles

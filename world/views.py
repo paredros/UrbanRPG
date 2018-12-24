@@ -7,10 +7,13 @@ def Mapeditor(request):
     #data = MapWorld.objects.filter(pk=1)[0]
     list = MapWorld.objects.all().values('pk','mapName')
     walkables = Walkables.objects.all()
+    solids = Solids.objects.all()
     print(list)
     #return render(request, 'editor/mapeditor.html', {'mapa':data.mapData, 'mapsList':list})
     return render(request, 'editor/mapeditor.html', {'mapsList':list,
-                                                     'walkables':walkables})
+                                                     'walkables':walkables,
+                                                     'solids':solids
+                                                     })
 
 def multiply(value, arg):
     return value*arg
@@ -18,13 +21,14 @@ def multiply(value, arg):
 def SaveMap(request):
     if request.method == 'POST':
         mapa = request.POST.get('mapa')
+        mapSolids = request.POST.get('mapasolids')
         mapaid = request.POST.get('id')
         print(mapa)
         response_data = {}
 
         #post = Post(text=post_text, author=request.user)
         #post.save()
-        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa)
+        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa, mapSolids=mapSolids)
 
         response_data['result'] = 'Paso!'
         #response_data['postpk'] = post.pk
@@ -54,13 +58,15 @@ def LoadMap(request):
 def CreateMap(request):
     if request.method == 'POST':
         mapa = request.POST.get('mapa')
+        mapSolids = request.POST.get('mapasolids')
         name = request.POST.get('name')
-        data = MapWorld.objects.create(mapName=name, mapData=mapa)
+        data = MapWorld.objects.create(mapName=name, mapData=mapa, mapSolids=mapSolids)
 
         response_data = {}
         response_data['result'] = 'Created'
         response_data['pk'] = data.pk
         response_data['mapa'] = data.mapData
+        response_data['mapasolids'] = data.mapSolids
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)

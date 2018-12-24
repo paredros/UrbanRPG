@@ -15,3 +15,4 @@ admin.site.register(TestModel,TestModelAdmin)
 
 admin.site.register(MapWorld)
 admin.site.register(Walkables)
+admin.site.register(Solids)

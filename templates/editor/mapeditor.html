@@ -30,12 +30,36 @@
                 </div>
             </div>
         </div>
-        <div class="col-5">
+        <div class="col-4">
             <div class="card">
                 <div class="card-body">
                     <button type="button" class="btn btn-primary float-right" onclick="createMap()">Create</button>
                     <input type="text" class="form-control w-75" id="NewMapName" placeholder="Name for New Map">
 
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="dropdown">
+                          <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownLoadMapa" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Layer To Edit
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
+                              <a class="dropdown-item" href="javascript:selectLayer(0)">Walkables</a>
+                              <a class="dropdown-item" href="javascript:selectLayer(1)">Solid</a>
+                          </div>
+
+                        </div>
+                        &nbsp;<span id="LayerEditingLabel" class="alert-danger">Walkables</span> &nbsp;&nbsp;
+                        <input class="checkbox-rowt" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                        View Solids
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,10 +106,25 @@
                     <p></p>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-body">
+                    Solids
+                    <div class="Space-10"></div>
+                    {% for sld in solids %}
+                        <div class="row">
+                            <div id="solid_brush{{ sld.pk }}" class="Pallete" style="background-image: URL('{{ sld.imgBase.url }}')" onclick="selectSolid({{ sld.pk }})">
+                            </div>
+                            &nbsp;<small>{{ sld.name }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
             <div class="Space-25"></div>
             <button type="button" class="btn btn-primary" onclick="saveMap()">Save</button>
         </div>
         <div class="col-lg-10">
+            <div id="MapHolder_Walkables" style="overflow:scroll;width: 100%;height: 100vh">
+            </div>
             <div id="MapHolder" style="overflow:scroll;width: 100%;height: 100vh">
                 {% comment %}
                 {% for y in 'yyyyyyyyyyy' %}
@@ -119,18 +158,32 @@
     var mapa= [];
     var CURRENT_PK=-1;
     var CURRENT_NAME="";
+    var CURRENT_MAPA_SOLIDS=[];
     var STATUS = "DISABLED";
     var WALKABLES_COLORS = {};//"{{walkables}}";
+    var SelectedWalkable = 0;
+    var SelectedSolid = -1;
+    var SelectedLayer = 0;
+    var SOLIDS_URLS = {}
+
+
     {% for wlk in walkables %}
         WALKABLES_COLORS['{{ wlk.pk }}']={
             'colorId':"{{ wlk.colorId }}"
-        }
+        };
     {% endfor %}
 
+    {% for sld in solids %}
+        SOLIDS_URLS['{{ sld.pk }}'] = {
+            'url':"{{ sld.imgBase.url }}"
+        };
+    {% endfor %}
     console.log(WALKABLES_COLORS);
 
     $( "#BuilderForm" ).submit(function( event ) {
-
+        if(STATUS=="DISABLED"){
+            return;
+        }
         //data = $("#BuilderForm").serializeArray();
         //alert($("#BuilderForm #sizeX").valueOf())
         var sizeX = $("#BuilderForm #sizeX").val();
@@ -140,31 +193,63 @@
         event.preventDefault();
     });
 
+
+    function selectLayer(lay) {
+        SelectedLayer=lay;
+        if(lay==0){
+            $('#LayerEditingLabel').text("Walkable");
+            $("#MapHolder_Walkables").css('opacity',1)
+        }else if(lay==1){
+            $('#LayerEditingLabel').text("Solids");
+            $("#MapHolder_Walkables").css('opacity',0.3)
+        }
+    }
     function clickOn(x,y) {
-        //alert("CLICK:"+x+","+y)
-        mapa[y][x]=SelectedWalkable;
-        /*$('#tile-'+x+'-'+y).removeClass("Tile_Block");
-        $('#tile-'+x+'-'+y).removeClass("Tile_Grass");
-        if(SelectedWalkable==0){
-            $('#tile-'+x+'-'+y).addClass("Tile_Block");
-        }else if(SelectedWalkable==1){
-            $('#tile-'+x+'-'+y).addClass("Tile_Grass");
-        }*/
-        $('#tile-'+x+'-'+y).css('background-color', WALKABLES_COLORS[SelectedWalkable+1].colorId);
+        if(SelectedLayer==0){
+            mapa[y][x]=SelectedWalkable;
+            $('#tileWalkable-'+x+'-'+y).css('background-color', WALKABLES_COLORS[SelectedWalkable+1].colorId);
+        }
     }
 
     function buildMap(sx,sy) {
+
         $("#MapHolder").empty();
         mapa= new Array(sy);
         for(var y=0;y<sy;y++){
             mapa[y] = new Array(sx);
             for(var x=0;x<sx;x++){
                 mapa[y][x] = 0;
-                $("#MapHolder").append(generateItem(x,y,0));
+                $("#MapHolder").append(generateItemClickable(x,y,0));
             }
         }
     }
-    var SelectedWalkable = 0;
+    function InitWithData(p_mapa) {
+        mapa = p_mapa;//{{ mapa }};
+        var sy = mapa.length;
+        var sx = mapa[0].length;
+        $("#BuilderForm #sizeX").val(sx);
+        $("#BuilderForm #sizeY").val(sy);
+        $("#MapHolder").empty();
+        for(var y=0;y<sy;y++){
+            for(var x=0;x<sx;x++){
+                $("#MapHolder_Walkables").append(generateItemWalkable(x,y,mapa[y][x]));
+                $("#MapHolder").append(generateItemClickable(x,y,mapa[y][x]));
+            }
+        }
+    }
+    function generateItemClickable(x, y, tipo){
+        var r = '<div id="tileClickable-'+x+'-'+y+'" class="Tile '
+        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;"';
+        r+= 'onclick="clickOn('+x+','+y+')">' + '</div>';
+        return r;
+    }
+    function generateItemWalkable(x, y, tipo){
+        var r = '<div id="tileWalkable-'+x+'-'+y+'" class="Tile '
+        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
+        r+='background-color:'+WALKABLES_COLORS[(tipo+1)].colorId+';"'
+        r+= 'onclick="clickOn('+x+','+y+')">' + '</div>';
+        return r;
+    }
     function selectWalkable(tipo) {
         SelectedWalkable=tipo-1;
         /*for(var i=0;i<2;i++){
@@ -172,6 +257,11 @@
         }*/
         $('[id*="walkable_brush"]').removeClass("TileSelected");
         $("#walkable_brush"+tipo).addClass("TileSelected");
+    }
+    function selectSolid(tipo) {
+        SelectedSolid = tipo-1;
+        $('[id*="solid_brush"]').removeClass("TileSelected");
+        $("#solid_brush"+tipo).addClass("TileSelected");
     }
     function saveMap() {
         if(STATUS == "DISABLED"){
@@ -201,31 +291,8 @@
             }
         });
     }
-    function InitWithData(p_mapa) {
-        mapa = p_mapa;//{{ mapa }};
-        var sy = mapa.length;
-        var sx = mapa[0].length;
-        $("#BuilderForm #sizeX").val(sx);
-        $("#BuilderForm #sizeY").val(sy);
-        $("#MapHolder").empty();
-        for(var y=0;y<sy;y++){
-            for(var x=0;x<sx;x++){
-                $("#MapHolder").append(generateItem(x,y,mapa[y][x]));
-            }
-        }
-    }
-    function generateItem(x, y, tipo){
-        var r = '<div id="tile-'+x+'-'+y+'" class="Tile '
-        /*if(tipo==0){
-            r+="Tile_Block";
-        }else if(tipo==1){
-            r+="Tile_Grass";
-        }*/
-        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
-        r+='background-color:'+WALKABLES_COLORS[(tipo+1)].colorId+';"'
-        r+= 'onclick="clickOn('+x+','+y+')">' + '</div>';
-        return r;
-    }
+
+
     function loadMapaData(id){
         $.ajax({
             url : "mapeditor/loadmap", // the endpoint
@@ -263,17 +330,22 @@
         var sy = 10;
         var sx = 10;
         var tmpmap= new Array(sy);
+        var tmpmapSolids= new Array(sy);
         for(var y=0;y<sy;y++){
             tmpmap[y] = new Array(sx);
+            tmpmapSolids[y] = new Array(sx);
             for(var x=0;x<sx;x++){
                 tmpmap[y][x] = 0;
+                tmpmapSolids[y][x] = -1;
             }
         }
         var JSONmapa = JSON.stringify(tmpmap);
+        var JSONmapaSolids = JSON.stringify(tmpmapSolids);
         $.ajax({
             url : "mapeditor/creamap", // the endpoint
             type : "POST", // http method
             data : { 'mapa' : JSONmapa,
+                'mapasolids' : JSONmapaSolids,
                 'name':name,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
@@ -286,6 +358,7 @@
                 if(json.result=="Created"){
                     CURRENT_PK = json.pk;
                     CURRENT_NAME = json.name;
+                    CURRENT_MAPA_SOLIDS = $.parseJSON(json.mapasolids);
                     InitWithData($.parseJSON(json.mapa));
                     STATUS = "LOADED";
                 }
