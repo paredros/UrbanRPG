@@ -13,6 +13,36 @@
 <body>
 <div class="container-fluid">
     <div class="row">
+        <div class="col-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownLoadMapa" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Load Map
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
+                          {% for mapa in mapsList %}
+                                <a class="dropdown-item" href="javascript:loadMapaData({{ mapa.pk }})">{{ mapa.mapName }}</a>
+                          {% endfor %}
+                      </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="card">
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary float-right" onclick="createMap()">Create</button>
+                    <input type="text" class="form-control w-75" id="NewMapName" placeholder="Name for New Map">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
         <div class="col-lg-2">
             <div class="card">
                 <div class="card-body">
@@ -72,6 +102,13 @@
         crossorigin="anonymous"></script>
 
 <script>
+    var mapa= [];
+    var CURRENT_PK=-1;
+    var CURRENT_NAME="";
+    var STATUS = "DISABLED";
+
+
+
     $( "#BuilderForm" ).submit(function( event ) {
 
         //data = $("#BuilderForm").serializeArray();
@@ -94,7 +131,7 @@
             $('#tile-'+x+'-'+y).addClass("Tile_Grass");
         }
     }
-    var mapa= [];
+
     function buildMap(sx,sy) {
         $("#MapHolder").empty();
         mapa= new Array(sy);
@@ -115,11 +152,15 @@
         $("#brush"+tipo).addClass("TileSelected")
     }
     function saveMap() {
+        if(STATUS == "DISABLED"){
+            return;
+        }
         var JSONmapa = JSON.stringify(mapa);
         $.ajax({
             url : "mapeditor/savemap", // the endpoint
             type : "POST", // http method
             data : { 'mapa' : JSONmapa,
+                'id':CURRENT_PK,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
 
@@ -138,8 +179,8 @@
             }
         });
     }
-    function InitWithData() {
-        mapa = {{ mapa }};
+    function InitWithData(p_mapa) {
+        mapa = p_mapa;//{{ mapa }};
         var sy = mapa.length;
         var sx = mapa[0].length;
         $("#BuilderForm #sizeX").val(sx);
@@ -161,7 +202,80 @@
         r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;"' + 'onclick="clickOn('+x+','+y+')">' + '</div>';
         return r;
     }
-    InitWithData()
+    function loadMapaData(id){
+        $.ajax({
+            url : "mapeditor/loadmap", // the endpoint
+            type : "POST", // http method
+            data : { 'id' : id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            }, // data sent with the post request
+
+            // handle a successful response
+            success : function(json) {
+                //$('#post-text').val(''); // remove the value from the input
+                console.log(json); // log the returned json to the console
+                console.log("success"); // another sanity check
+                if(json.result=="Loaded"){
+                    CURRENT_PK = json.pk;
+                    CURRENT_NAME = json.name;
+                    InitWithData($.parseJSON(json.mapa));
+                    STATUS = "LOADED";
+                }
+            },
+
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    function createMap() {
+        var name = $("#NewMapName").val();
+        if(name == "" || name == undefined){
+            return;
+        }
+        var sy = 10;
+        var sx = 10;
+        var tmpmap= new Array(sy);
+        for(var y=0;y<sy;y++){
+            tmpmap[y] = new Array(sx);
+            for(var x=0;x<sx;x++){
+                tmpmap[y][x] = 0;
+            }
+        }
+        var JSONmapa = JSON.stringify(tmpmap);
+        $.ajax({
+            url : "mapeditor/creamap", // the endpoint
+            type : "POST", // http method
+            data : { 'mapa' : JSONmapa,
+                'name':name,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            }, // data sent with the post request
+
+            // handle a successful response
+            success : function(json) {
+                //$('#post-text').val(''); // remove the value from the input
+                console.log(json); // log the returned json to the console
+                console.log("success"); // another sanity check
+                if(json.result=="Created"){
+                    CURRENT_PK = json.pk;
+                    CURRENT_NAME = json.name;
+                    InitWithData($.parseJSON(json.mapa));
+                    STATUS = "LOADED";
+                }
+            },
+
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    }
+    //InitWithData()
 </script>
 </body>
 </html>

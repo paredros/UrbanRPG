@@ -1,7 +1,26 @@
 ToDo:
-[ ] Hacer la vista testeo del cliente
+[o] Generador On The Fly de Dungeon
+    [o] Que lo genere Django
+!!!!! No porque pierdo lo lindo de tener mapas unicos, dificiles
 
 --
+[ ] Buscar Enemigos
+[ ] Poner Spawn de Enemigos
+    [ ] Que el Enemigo pueda hacer Patrol
+    [ ] Que el Enemigo Pueda hacer Chase
+
+--
+[ ] Hacer Arma Espada
+[ ] Hacer Arma Arco
+[ ] Hacer Arma Bola Magica
+
+--
+[ ] Hacer nueva Version de Mapa
+    [x] Poner Lista Selectora para Cargar
+    [x] Si voy a crear ponerle un nombre
+[ ] Tener Layers
+[ ] Poner Punto De Inicio a Mano
+[ ] Poder Cargar y Grabar distintos
 [ ] Mas Tiles
     [ ] Hacer distintos tipos de Tiles
     [ ] Ponerles Propiedades de Caminable o no
@@ -21,6 +40,7 @@ ToDo:
 -----------------
 DONE
 
+[x] Hacer la vista testeo del cliente
 [x] Levantar la info del modelo de world
 [x] Elegir una coordenada para arrancar
 [x] Elegir direccion de vista

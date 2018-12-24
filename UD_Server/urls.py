@@ -25,5 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mapeditor', views.Mapeditor, name='mapeditor'),
     path('mapeditor/savemap',views.SaveMap),
+    path('mapeditor/loadmap',views.LoadMap),
+    path('mapeditor/creamap',views.CreateMap),
     path('navtest', clientview.worldnavigation)
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
