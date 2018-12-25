@@ -2,6 +2,7 @@ var camera, scene, renderer;
 var geometry, material, mesh;
 var MAPA=[];
 var SOLIDS=[];
+var CEILS=[];
 var props={};
 
 var VIEW_W=320;
@@ -52,6 +53,12 @@ function init() {
             });
         }else if(SOLIDS_OBJS[obj].type=="FLOOR"){
             MATERIALS[obj] = new THREE.MeshPhongMaterial({map: TEXTURES[obj], bumpMap:TEXTURES[obj],shading: THREE.FlatShading,side: THREE.DoubleSide});
+        }else if(SOLIDS_OBJS[obj].type=="CEIL") {
+            MATERIALS[obj] = new THREE.MeshPhongMaterial({
+                map: TEXTURES[obj],
+                bumpMap: TEXTURES[obj],
+                shading: THREE.FlatShading
+            });
         }
     }
     //material = new THREE.MeshPhongMaterial({map: TEXTURES["1"], bumpMap:TEXTURES["1"],shading: THREE.FlatShading});
@@ -62,7 +69,36 @@ function init() {
 
     for(var y = 0;y<props.height;y++){
         for(var x = 0;x<props.width;x++){
-            if(SOLIDS[y][x]==0) {
+            if(SOLIDS[y][x]!=-1) {
+                var k = SOLIDS[y][x] + 1;
+                var type = SOLIDS_OBJS[k].type;
+
+                if (type == "FLOOR") {
+                    var mesh = new THREE.Mesh(FLOOR_BASE, MATERIALS[k]);
+                    mesh.position.x = x;
+                    mesh.position.z = y;
+                    mesh.position.y = -0.5;
+                    mesh.rotation.x = THREE.Math.degToRad(90)
+                    scene.add(mesh);
+                } else if (type == "WALL") {
+                    var mesh = new THREE.Mesh(WALL_BASE, MATERIALS[k]);
+                    mesh.position.x = x;
+                    mesh.position.z = y;
+                    scene.add(mesh);
+                }
+            }
+            if(CEILS[y][x]!=-1) {
+                var k = CEILS[y][x] + 1;
+                var type = SOLIDS_OBJS[k].type;
+                if(type == "CEIL"){
+                    var mesh = new THREE.Mesh(WALL_BASE, MATERIALS[k]);
+                    mesh.position.x = x;
+                    mesh.position.z = y;
+                    mesh.position.y = 1;
+                    scene.add(mesh);
+                }
+            }
+            /*if(SOLIDS[y][x]==0) {
                 var mesh = new THREE.Mesh(WALL_BASE, MATERIALS[SOLIDS[y][x]+1]);
                 mesh.position.x = x;
                 mesh.position.z = y;
@@ -74,7 +110,7 @@ function init() {
                 mesh.position.y = -0.5;
                 mesh.rotation.x = THREE.Math.degToRad(90)
                 scene.add(mesh);
-            }
+            }*/
         }
     }
     CubeColor();

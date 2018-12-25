@@ -10,6 +10,7 @@ class MapWorld(models.Model):
     mapName = models.CharField(max_length=255)
     mapData = models.TextField(null=True, blank=True)
     mapSolids = models.TextField(null=True, blank=True)
+    mapSolidsCeil = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.mapName

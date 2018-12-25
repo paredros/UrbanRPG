@@ -22,6 +22,7 @@
             props={{ props | safe }};
             MAPA={{ map }};
             SOLIDS = {{ mapsolids }}
+            CEILS = {{ mapsolidsceil }}
             FN_LEFT=RotateLeft;
             FN_RIGHT=RotateRight;
             FN_UP=MoveFW;
@@ -41,6 +42,7 @@
                     'type':"{{ sld.type }}"
                 };
                 var loader = new THREE.TextureLoader();
+                console.log('{{ sld.imgBase.url }}')
                 loader.load('{{ sld.imgBase.url }}', function ( texture ) {
                     texture.magFilter=THREE.NearestFilter;
                     texture.minFilter=THREE.NearestFilter;

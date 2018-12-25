@@ -30,6 +30,7 @@ def worldnavigation(request):
     return render(request, 'cliente/navtest.html', {'map':data.mapData,
                                                     'props':props,
                                                     'mapsolids':data.mapSolids,
+                                                    'mapsolidsceil':data.mapSolidsCeil,
                                                     'walkables': walkables,
                                                     'solids': solids
                                                     })

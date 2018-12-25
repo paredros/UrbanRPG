@@ -18,6 +18,8 @@ ToDo:
 [x] Hacer nueva Version de Mapa
     [x] Poner Lista Selectora para Cargar
     [x] Si voy a crear ponerle un nombre
+[ ] Que las Tools Que muestren sea las del layer correspondiente
+[ ] Mover Abajo la tool de build
 [ ] Tener Layers
     [x] Separar el Tile clickeable del del arte, asi responde al layer selected
         [x] Probar primero solo con el walkable
@@ -25,7 +27,10 @@ ToDo:
     [x] Levantar en la vista de juego los layers
     [x] En la vista de Juego levantar texturas de la DB
     [x] Convertir la creacion de Geometrias a que sean dinamicas tambien
-    [ ] Pasar el posicionamiento de la geometria de acuerdo al tipo
+    [x] Pasar el posicionamiento de la geometria de acuerdo al tipo
+    [x] Hacer layer de Ceil
+    [x] Agregar Ceil al cliente view
+    [ ] Hacer layer de Interactivos (entrada, salida, puerta, trampa)
 [ ] Poner Punto De Inicio a Mano
 [ ] Poder Cargar y Grabar distintos
 [ ] Mas Tiles

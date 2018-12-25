@@ -22,13 +22,14 @@ def SaveMap(request):
     if request.method == 'POST':
         mapa = request.POST.get('mapa')
         mapSolids = request.POST.get('mapasolids')
+        mapSolidsCeil = request.POST.get('mapasolidsceil')
         mapaid = request.POST.get('id')
         print(mapa)
         response_data = {}
 
         #post = Post(text=post_text, author=request.user)
         #post.save()
-        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa, mapSolids=mapSolids)
+        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil)
 
         response_data['result'] = 'Paso!'
         #response_data['postpk'] = post.pk
@@ -50,6 +51,7 @@ def LoadMap(request):
         response_data['pk'] = data.pk
         response_data['mapa'] = data.mapData
         response_data['mapasolids'] = data.mapSolids
+        response_data['mapasolidsceil'] = data.mapSolidsCeil
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)
@@ -60,14 +62,16 @@ def CreateMap(request):
     if request.method == 'POST':
         mapa = request.POST.get('mapa')
         mapSolids = request.POST.get('mapasolids')
+        mapSolidsCeil = request.POST.get('mapasolidsceil')
         name = request.POST.get('name')
-        data = MapWorld.objects.create(mapName=name, mapData=mapa, mapSolids=mapSolids)
+        data = MapWorld.objects.create(mapName=name, mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil)
 
         response_data = {}
         response_data['result'] = 'Created'
         response_data['pk'] = data.pk
         response_data['mapa'] = data.mapData
         response_data['mapasolids'] = data.mapSolids
+        response_data['mapasolidsceil'] = data.mapSolidsCeil
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)
