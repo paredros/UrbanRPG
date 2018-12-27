@@ -11,6 +11,8 @@ class MapWorld(models.Model):
     mapData = models.TextField(null=True, blank=True)
     mapSolids = models.TextField(null=True, blank=True)
     mapSolidsCeil = models.TextField(null=True, blank=True)
+    mapInteractivos = models.TextField(null=True, blank=True)
+    scriptInteractivos = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.mapName
@@ -45,3 +47,21 @@ class Solids(models.Model):
     def __str__(self):
         return self.name
 
+
+INTERACTIVO_CHOICES = (
+    ("LEVELGATE", "LevelGate"),
+    ("DOOR", "Door"),
+    ("BUTTON", "Button"),
+    ("TRAP", "Trap"),
+)
+
+class Interactivos(models.Model):
+    name = models.CharField(max_length=255)
+    type = models.CharField(max_length=30, choices=INTERACTIVO_CHOICES, default="LEVELGATE")
+    icon = models.ImageField(upload_to='icons/', null=True)
+    imgBase = models.ImageField(upload_to='textures/', null=True, blank=True)
+    #es un json de cosas especiales
+    properties = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name

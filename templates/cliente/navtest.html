@@ -9,7 +9,15 @@
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+    <script src="{% static 'three.js-master/examples/js/postprocessing/EffectComposer.js' %}"></script>
+    <script src="{% static 'three.js-master/examples/js/postprocessing/ShaderPass.js' %}"></script>
+    <script src="{% static 'three.js-master/examples/js/postprocessing/RenderPass.js' %}"></script>
+    <script src="{% static 'three.js-master/examples/js/shaders/CopyShader.js' %}"></script>
+    <script src="{% static 'three.js-master/examples/js/shaders/SepiaShader.js' %}"></script>
+    <script src="{% static 'three.js-master/examples/js/shaders/ColorifyShader.js' %}"></script>
+    <script src="{% static 'shaders/SpectrumShader.js' %}"></script>
     <script src="{% static 'jsgl/clientview.js' %}"></script>
     <script src="{% static 'js/keyboardcontrol.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
@@ -21,8 +29,9 @@
            //código a ejecutar cuando el DOM está listo para recibir instrucciones.
             props={{ props | safe }};
             MAPA={{ map }};
-            SOLIDS = {{ mapsolids }}
-            CEILS = {{ mapsolidsceil }}
+            SOLIDS = {{ mapsolids }};
+            CEILS = {{ mapsolidsceil }};
+            INTERACTIVOS = $.parseJSON('{{ mapinteractivos | safe }}');
             FN_LEFT=RotateLeft;
             FN_RIGHT=RotateRight;
             FN_UP=MoveFW;
@@ -35,6 +44,44 @@
                     'velocity':{{ wlk.velocity }}
                 };
             {% endfor %}
+
+            var interacprops ={}
+            {% for ittv in interactivos %}
+                interacprops ={}
+                {% if ittv.properties %}
+                    interacprops = {{ ittv.properties | safe }}
+                {% endif %}
+                INTERACTIVOS_OBJS['{{ ittv.pk }}'] = {
+                    'type':"{{ ittv.type }}",
+                    'properties':interacprops
+                };
+                {% if ittv.imgBase %}
+                    var loader = new THREE.TextureLoader();
+                    var tilesHorizontal = 1;//props.t;
+                    var tilesVertical = 1;
+                    if(interacprops.spritesheet){
+                        tilesHorizontal = interacprops.spritedata.tiles_x;
+                        tilesVertical = interacprops.spritedata.tiles_y;
+                    }
+                    loader.load('{{ ittv.imgBase.url }}', function ( texture ) {
+                        texture.magFilter=THREE.NearestFilter;
+                        texture.minFilter=THREE.NearestFilter;
+                        //texture.generateMipmaps= false;
+                        if(interacprops.spritesheet) {
+                            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                            texture.repeat.set(1 / tilesHorizontal, 1 / tilesVertical);
+                            texture.offset.x = 0;
+                            texture.offset.y = (1 / tilesVertical) * (tilesVertical-1);
+                        }
+
+                        TEXTURES_INTERACTIVOS["{{ ittv.pk }}"]=texture;
+                    });
+                {% endif %}
+            {% endfor %}
+
+            SCRIPTS_INTERACTIVOS = $.parseJSON('{{ scriptinteractivos | safe }}');
+
+            //console.log(INTERACTIVOS);
 
             {% for sld in solids %}
                 SOLIDS_OBJS['{{ sld.pk }}'] = {
@@ -50,18 +97,7 @@
                 });
             {% endfor %}
 
-            /*var loader = new THREE.TextureLoader();
-            loader.load('{% static "textures/wall1.png" %}', function ( texture ) {
-                texture.magFilter=THREE.NearestFilter;
-                texture.minFilter=THREE.NearestFilter;
-                TEXTURES["WALL1"]=texture;
-            });
-            var loader = new THREE.TextureLoader();
-            loader.load('{% static "textures/floor1.png" %}', function ( texture ) {
-                texture.magFilter=THREE.NearestFilter;
-                texture.minFilter=THREE.NearestFilter;
-                TEXTURES["FLOOR1"]=texture;
-            });*/
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
 
             THREE.DefaultLoadingManager.onLoad = function ( ) {
                 PreInit();

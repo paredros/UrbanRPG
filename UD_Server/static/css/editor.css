@@ -8,6 +8,7 @@
     width: 30px;
     height: 30px;
     position: absolute;
+    background-size: cover;
 }
 .Tile:hover {
     cursor: pointer;
@@ -25,6 +26,7 @@
     width: 30px;
     height: 30px;
     border: 1px solid orange;
+    background-size: cover;
     /*position: absolute;*/
 }
 .Pallete:hover {

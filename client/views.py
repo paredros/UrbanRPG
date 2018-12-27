@@ -8,8 +8,10 @@ def worldnavigation(request):
     data = MapWorld.objects.first()
     walkables = Walkables.objects.all()
     solids = Solids.objects.all()
+    interactivos = Interactivos.objects.all()
 
     mapa = json.loads(data.mapData)
+    scriptsinteractivos = json.dumps(json.loads(data.scriptInteractivos))
     print(mapa[0][0])
     height=len(mapa)
     width=len(mapa[0])
@@ -31,6 +33,9 @@ def worldnavigation(request):
                                                     'props':props,
                                                     'mapsolids':data.mapSolids,
                                                     'mapsolidsceil':data.mapSolidsCeil,
+                                                    'mapinteractivos':data.mapInteractivos,
+                                                    'scriptinteractivos':scriptsinteractivos,
                                                     'walkables': walkables,
-                                                    'solids': solids
+                                                    'solids': solids,
+                                                    'interactivos': interactivos
                                                     })

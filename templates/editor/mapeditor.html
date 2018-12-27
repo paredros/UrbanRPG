@@ -17,14 +17,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownLoadMapa" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Load Map
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
-                          {% for mapa in mapsList %}
-                                <a class="dropdown-item" href="javascript:loadMapaData({{ mapa.pk }})">{{ mapa.mapName }}</a>
-                          {% endfor %}
-                      </div>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownLoadMapa"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Load Map
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
+                            {% for mapa in mapsList %}
+                                <a class="dropdown-item"
+                                   href="javascript:loadMapaData({{ mapa.pk }})">{{ mapa.mapName }}</a>
+                            {% endfor %}
+                        </div>
 
                     </div>
                 </div>
@@ -45,20 +47,22 @@
                     <div class="row">
 
                         <div class="dropdown">
-                          <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownLoadMapa" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Layer To Edit
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
-                              <a class="dropdown-item" href="javascript:selectLayer(0)">Walkables</a>
-                              <a class="dropdown-item" href="javascript:selectLayer(1)">Solid
-                              <a class="dropdown-item" href="javascript:selectLayer(2)">Ceil</a>
-                          </div>
+                            <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownLoadMapa"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Layer To Edit
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownLoadMapa">
+                                <a class="dropdown-item" href="javascript:selectLayer(0)">Walkables</a>
+                                <a class="dropdown-item" href="javascript:selectLayer(1)">Solid</a>
+                                <a class="dropdown-item" href="javascript:selectLayer(2)">Ceil</a>
+                                <a class="dropdown-item" href="javascript:selectLayer(3)">Interactivos</a>
+                            </div>
 
                         </div>
                         &nbsp;<span id="LayerEditingLabel" class="alert-danger">Walkables</span> &nbsp;&nbsp;
                         <input class="checkbox-rowt" type="checkbox" value="" id="defaultCheck1">
                         <label class="form-check-label" for="defaultCheck1">
-                        View Solids
+                            View Solids
                         </label>
                     </div>
                 </div>
@@ -72,16 +76,13 @@
 
             <div class="card" id="ToolsWalkables">
                 <div class="card-body">
-
-                    <!--div id="brush0" class="Tile Tile_Block TileSelected" style="left: 10px" onclick="selectBrush(0)"></div>
-                    <div id="brush1" class="Tile Tile_Grass" style="left: 50px" onclick="selectBrush(1)"></div-->
-
                     Walkables
                     <div class="Space-10"></div>
                     {% for wlkbl in walkables %}
                         <!--div id="brush1" class="Tile" style="left: 50px; background-color: {{ wlkbl.colorId }}" onclick="selectBrush(1)"></div-->
                         <div class="row">
-                            <div id="walkable_brush{{ wlkbl.pk }}" class="Pallete" style="background-color: {{ wlkbl.colorId }}" onclick="selectWalkable({{ wlkbl.pk }})">
+                            <div id="walkable_brush{{ wlkbl.pk }}" class="Pallete"
+                                 style="background-color: {{ wlkbl.colorId }}" onclick="selectWalkable({{ wlkbl.pk }})">
                             </div>
                             &nbsp;<small>{{ wlkbl.name }}</small>
                         </div>
@@ -102,11 +103,13 @@
                     </div>
                     {% for sld in solids %}
                         {% if sld.type != "CEIL" %}
-                        <div class="row">
-                            <div id="solid_brush{{ sld.pk }}" class="Pallete" style="background-image: URL('{{ sld.imgBase.url }}')" onclick="selectSolid({{ sld.pk }})">
+                            <div class="row">
+                                <div id="solid_brush{{ sld.pk }}" class="Pallete"
+                                     style="background-image: URL('{{ sld.imgBase.url }}')"
+                                     onclick="selectSolid({{ sld.pk }})">
+                                </div>
+                                &nbsp;<small>{{ sld.name }}</small>
                             </div>
-                            &nbsp;<small>{{ sld.name }}</small>
-                        </div>
                         {% endif %}
                     {% endfor %}
 
@@ -117,20 +120,57 @@
                     Solids
                     <div class="Space-10"></div>
                     <div class="row">
-                        <div id="solidceil_brush0" class="Pallete" style="background-color: black" onclick="selectSolidCeil(0)">
+                        <div id="solidceil_brush0" class="Pallete" style="background-color: black"
+                             onclick="selectSolidCeil(0)">
                         </div>
                         &nbsp;<small>Erase</small>
                     </div>
                     {% for sld in solids %}
                         {% if sld.type == "CEIL" %}
-                        <div class="row">
-                            <div id="solidceil_brush{{ sld.pk }}" class="Pallete" style="background-image: URL('{{ sld.imgBase.url }}')" onclick="selectSolidCeil({{ sld.pk }})">
+                            <div class="row">
+                                <div id="solidceil_brush{{ sld.pk }}" class="Pallete"
+                                     style="background-image: URL('{{ sld.imgBase.url }}')"
+                                     onclick="selectSolidCeil({{ sld.pk }})">
+                                </div>
+                                &nbsp;<small>{{ sld.name }}</small>
                             </div>
-                            &nbsp;<small>{{ sld.name }}</small>
-                        </div>
                         {% endif %}
                     {% endfor %}
 
+                </div>
+            </div>
+            <div class="card" id="ToolsInteractivos" style="display: none">
+                <div class="card-body">
+                    Walkables
+                    <div class="Space-10"></div>
+                    <div class="row">
+                        <div id="interactivo_brush-1" class="Pallete" style="background-color: green"
+                             onclick="selectInteractivo(-1)">
+                        </div>
+                        &nbsp;<small>Select</small>
+                    </div>
+                    <div class="row">
+                        <div id="interactivo_brush0" class="Pallete" style="background-color: black"
+                             onclick="selectInteractivo(0)">
+                        </div>
+                        &nbsp;<small>Erase</small>
+                    </div>
+                    {% for ittv in interactivos %}
+                        <div class="row">
+                            <div id="interactivo_brush{{ ittv.pk }}" class="Pallete"
+                                 style="background-image: URL('{{ ittv.icon.url }}')"
+                                 onclick="selectInteractivo({{ ittv.pk }})">
+                            </div>
+                            &nbsp;<small>{{ ittv.name }}</small>
+                        </div>
+                    {% endfor %}
+
+                    <p></p>
+                    <div class="row">
+                        <input type="text" class="form-control w-100" id="InteractivoIDChanger" placeholder="ID">
+                        <br>
+                        <button type="button" class="btn btn-info" onclick="setInteractivoID()">SetID</button>
+                    </div>
                 </div>
             </div>
             <div class="Space-25"></div>
@@ -141,12 +181,14 @@
                     <form id="BuilderForm">
                         <div class="form-group">
                             <label for="sizeX">Size X</label>
-                            <input type="number" class="form-control" id="sizeX" aria-describedby="sizeXHelp" placeholder="Enter X" value="23">
+                            <input type="number" class="form-control" id="sizeX" aria-describedby="sizeXHelp"
+                                   placeholder="Enter X" value="23">
                             <small id="sizeXHelp" class="form-text text-muted">X Size</small>
                         </div>
                         <div class="form-group">
                             <label for="sizeY">Size Y</label>
-                            <input type="number" class="form-control" id="sizeY" aria-describedby="sizeYHelp" placeholder="Enter Y" value="23">
+                            <input type="number" class="form-control" id="sizeY" aria-describedby="sizeYHelp"
+                                   placeholder="Enter Y" value="23">
                             <small id="sizeYHelp" class="form-text text-muted">Y Size</small>
                         </div>
                         <button type="submit" class="btn btn-primary">Build</button>
@@ -160,6 +202,8 @@
             <div id="MapHolder_Solidos" style="overflow:scroll;width: 100%;height: 100vh; opacity: 0.3">
             </div>
             <div id="MapHolder_SolidosCeil" style="overflow:scroll;width: 100%;height: 100vh; opacity: 0.3">
+            </div>
+            <div id="MapHolder_Interactivos" style="overflow:scroll;width: 100%;height: 100vh; opacity: 0.3">
             </div>
             <div id="MapHolder" style="overflow:scroll;width: 100%;height: 100vh">
                 {% comment %}
@@ -179,10 +223,9 @@
 </div>
 
 
-
-
 <!--script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script-->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
@@ -191,119 +234,189 @@
         crossorigin="anonymous"></script>
 
 <script>
-    var mapa= [];
-    var CURRENT_PK=-1;
-    var CURRENT_NAME="";
-    var CURRENT_MAPA_SOLIDS=[];
-    var CURRENT_MAPA_CEIL=[];
+    var mapa = [];
+    var CURRENT_PK = -1;
+    var CURRENT_NAME = "";
+    var CURRENT_MAPA_SOLIDS = [];
+    var CURRENT_MAPA_CEIL = [];
+    var CURRENT_MAPA_INTERACTIVOS = [];
     var STATUS = "DISABLED";
     var WALKABLES_COLORS = {};//"{{walkables}}";
     var SelectedWalkable = 0;
     var SelectedSolid = -1;
     var SelectedCeil = -1;
+    var SelectedInteractivo = -1;
     var SelectedLayer = 0;
-    var SOLIDS_URLS = {}
+    var SOLIDS_URLS = {};
+    var INTERACTIVOS_URLS = {};
+    var INTERACTIVO_SELECTED = -1;//{x:-1,y:-1};
+    var AUTO_ID;
+
 
 
     {% for wlk in walkables %}
-        WALKABLES_COLORS['{{ wlk.pk }}']={
-            'colorId':"{{ wlk.colorId }}"
+        WALKABLES_COLORS['{{ wlk.pk }}'] = {
+            'colorId': "{{ wlk.colorId }}"
         };
     {% endfor %}
 
     {% for sld in solids %}
         SOLIDS_URLS['{{ sld.pk }}'] = {
-            'url':"{{ sld.imgBase.url }}"
+            'url': "{{ sld.imgBase.url }}"
         };
     {% endfor %}
-    console.log(WALKABLES_COLORS);
+    {% for ittv in interactivos %}
+        INTERACTIVOS_URLS['{{ ittv.pk }}'] = {
+            'url': "{{ ittv.icon.url }}"
+        };
+    {% endfor %}
+    console.log(INTERACTIVOS_URLS);
 
-    $( "#BuilderForm" ).submit(function( event ) {
-        if(STATUS=="DISABLED"){
+    $("#BuilderForm").submit(function (event) {
+        if (STATUS == "DISABLED") {
             return;
         }
         //data = $("#BuilderForm").serializeArray();
         //alert($("#BuilderForm #sizeX").valueOf())
         var sizeX = $("#BuilderForm #sizeX").val();
         var sizeY = $("#BuilderForm #sizeY").val();
-        buildMap(sizeX,sizeY)
+        buildMap(sizeX, sizeY)
         //alert( "Size:" + data.sizeX + "," +data.sizeY );
         event.preventDefault();
     });
 
 
     function selectLayer(lay) {
-        SelectedLayer=lay;
-        if(lay==0){
+        SelectedLayer = lay;
+        if (lay == 0) {
             $('#LayerEditingLabel').text("Walkable");
-            $("#MapHolder_Walkables").css('opacity',1);
-            $("#MapHolder_Solidos").css('opacity',0.3);
-            $("#MapHolder_SolidosCeil").css('opacity',0.3);
-            $("#ToolsSolids").css('display','none');
-            $("#ToolsSolidsCeil").css('display','none');
-            $("#ToolsWalkables").css('display','');
-        }else if(lay==1){
+            $("#MapHolder_Walkables").css('opacity', 1);
+            $("#MapHolder_Solidos").css('opacity', 0.3);
+            $("#MapHolder_SolidosCeil").css('opacity', 0.3);
+            $("#MapHolder_Interactivos").css('opacity', 0.3);
+            $("#ToolsSolids").css('display', 'none');
+            $("#ToolsSolidsCeil").css('display', 'none');
+            $("#ToolsInteractivos").css('display', 'none');
+            $("#ToolsWalkables").css('display', '');
+        } else if (lay == 1) {
             $('#LayerEditingLabel').text("Solids");
-            $("#MapHolder_Walkables").css('opacity',0.3);
-            $("#MapHolder_SolidosCeil").css('opacity',0.3);
-            $("#MapHolder_Solidos").css('opacity',1);
-            $("#ToolsSolids").css('display',"");
-            $("#ToolsWalkables").css('display','none');
-            $("#ToolsSolidsCeil").css('display','none');
-        }else if(lay==2){
+            $("#MapHolder_Walkables").css('opacity', 0.3);
+            $("#MapHolder_SolidosCeil").css('opacity', 0.3);
+            $("#MapHolder_Interactivos").css('opacity', 0.3);
+            $("#MapHolder_Solidos").css('opacity', 1);
+            $("#ToolsSolids").css('display', "");
+            $("#ToolsWalkables").css('display', 'none');
+            $("#ToolsInteractivos").css('display', 'none');
+            $("#ToolsSolidsCeil").css('display', 'none');
+        } else if (lay == 2) {
             $('#LayerEditingLabel').text("Ceil");
-            $("#MapHolder_Walkables").css('opacity',0.3);
-            $("#MapHolder_SolidosCeil").css('opacity',1);
-            $("#MapHolder_Solidos").css('opacity',0.3);
-            $("#ToolsSolids").css('display',"none");
-            $("#ToolsWalkables").css('display','none');
-            $("#ToolsSolidsCeil").css('display','');
-        }
-    }
-    function clickOn(x,y) {
-        if(SelectedLayer==0){
-            mapa[y][x]=SelectedWalkable;
-            $('#tileWalkable-'+x+'-'+y).css('background-color', WALKABLES_COLORS[SelectedWalkable+1].colorId);
-        }else if(SelectedLayer==1){
-            //console.log(SelectedSolid +":" + SOLIDS_URLS[SelectedSolid+1].url);
-            CURRENT_MAPA_SOLIDS[y][x]=SelectedSolid;
-            if(SelectedSolid==-1){
-                $('#tileSolid-' + x + '-' + y).css('background-image','none');
-            }else {
-                $('#tileSolid-' + x + '-' + y).css('background-image', 'url(' + SOLIDS_URLS[SelectedSolid + 1].url + ')');
-            }
-        }else if(SelectedLayer==2){
-            CURRENT_MAPA_CEIL[y][x]=SelectedCeil;
-            if(SelectedCeil==-1){
-                $('#tileSolidCeil-' + x + '-' + y).css('background-image','none');
-            }else {
-                $('#tileSolidCeil-' + x + '-' + y).css('background-image', 'url(' + SOLIDS_URLS[SelectedCeil + 1].url + ')');
-            }
+            $("#MapHolder_Walkables").css('opacity', 0.3);
+            $("#MapHolder_SolidosCeil").css('opacity', 1);
+            $("#MapHolder_Solidos").css('opacity', 0.3);
+            $("#MapHolder_Interactivos").css('opacity', 0.3);
+            $("#ToolsSolids").css('display', "none");
+            $("#ToolsWalkables").css('display', 'none');
+            $("#ToolsInteractivos").css('display', 'none');
+            $("#ToolsSolidsCeil").css('display', '');
+        } else if (lay == 3) {
+            $('#LayerEditingLabel').text("Interactivos");
+            $("#MapHolder_Walkables").css('opacity', 0.3);
+            $("#MapHolder_SolidosCeil").css('opacity', 0.3);
+            $("#MapHolder_Solidos").css('opacity', 0.3);
+            $("#MapHolder_Interactivos").css('opacity', 1);
+            $("#ToolsSolids").css('display', "none");
+            $("#ToolsWalkables").css('display', 'none');
+            $("#ToolsInteractivos").css('display', '');
+            $("#ToolsSolidsCeil").css('display', 'none');
         }
     }
 
-    function buildMap(sx,sy) {
+    function clickOn(x, y) {
+        if (SelectedLayer == 0) {
+            mapa[y][x] = SelectedWalkable;
+            $('#tileWalkable-' + x + '-' + y).css('background-color', WALKABLES_COLORS[SelectedWalkable + 1].colorId);
+        } else if (SelectedLayer == 1) {
+            //console.log(SelectedSolid +":" + SOLIDS_URLS[SelectedSolid+1].url);
+            CURRENT_MAPA_SOLIDS[y][x] = SelectedSolid;
+            if (SelectedSolid == -1) {
+                $('#tileSolid-' + x + '-' + y).css('background-image', 'none');
+            } else {
+                $('#tileSolid-' + x + '-' + y).css('background-image', 'url(' + SOLIDS_URLS[SelectedSolid + 1].url + ')');
+            }
+        } else if (SelectedLayer == 2) {
+            CURRENT_MAPA_CEIL[y][x] = SelectedCeil;
+            if (SelectedCeil == -1) {
+                $('#tileSolidCeil-' + x + '-' + y).css('background-image', 'none');
+            } else {
+                $('#tileSolidCeil-' + x + '-' + y).css('background-image', 'url(' + SOLIDS_URLS[SelectedCeil + 1].url + ')');
+            }
+        } else if (SelectedLayer == 3) {
+            console.log(SelectedInteractivo)
+            if(SelectedInteractivo == -2){
+                if (CURRENT_MAPA_INTERACTIVOS[y][x] != -1) {
+                    var val = CURRENT_MAPA_INTERACTIVOS[y][x].split(",");
+                    INTERACTIVO_SELECTED = {x:x,y:y,tipo:val[0]};
+                    $('#InteractivoIDChanger').val(val[1]);
+                }else {
+                    INTERACTIVO_SELECTED =-1;
+                }
+            }else {
+                CURRENT_MAPA_INTERACTIVOS[y][x] = SelectedInteractivo;
+                INTERACTIVO_SELECTED =-1;
+                if (SelectedInteractivo == -1) {
+                    $('#tileInteractivo-' + x + '-' + y).css('background-image', 'none');
+                } else {
+                    CURRENT_MAPA_INTERACTIVOS[y][x] = SelectedInteractivo+","+AUTO_ID;
+                    AUTO_ID++;
+                    $('#tileInteractivo-' + x + '-' + y).css('background-image', 'url(' + INTERACTIVOS_URLS[SelectedInteractivo + 1].url + ')');
+                }
+            }
+        }
+    }
+    function setInteractivoID(){
+        CURRENT_MAPA_INTERACTIVOS[INTERACTIVO_SELECTED.y][INTERACTIVO_SELECTED.x] = INTERACTIVO_SELECTED.tipo+","+$('#InteractivoIDChanger').val();
+        /*AUTO_ID=0;
+        var sy = mapa.length;
+        var sx = mapa[0].length;
+        for (var y = 0; y < sy; y++) {
+            for (var x = 0; x < sx; x++) {
+                if(CURRENT_MAPA_INTERACTIVOS[y][x]!=-1) {
+                    var val = CURRENT_MAPA_INTERACTIVOS[y][x].split(",");
+                    if (parseInt(val[1]) > AUTO_ID) {
+                        AUTO_ID = parseInt(val[1])+1;
+                    }
+                }
+            }
+        }*/
+    }
+    function buildMap(sx, sy) {
 
         $("#MapHolder").empty();
         $("#MapHolder_Walkables").empty();
-        mapa= new Array(sy);
+        mapa = new Array(sy);
         CURRENT_MAPA_SOLIDS = new Array(sy);
         CURRENT_MAPA_CEIL = new Array(sy);
-        for(var y=0;y<sy;y++){
+        CURRENT_MAPA_INTERACTIVOS = new Array(sy);
+        AUTO_ID=0;
+        for (var y = 0; y < sy; y++) {
             mapa[y] = new Array(sx);
             CURRENT_MAPA_SOLIDS[y] = new Array(sx);
             CURRENT_MAPA_CEIL[y] = new Array(sx);
-            for(var x=0;x<sx;x++){
+            CURRENT_MAPA_INTERACTIVOS[y] = new Array(sx);
+            for (var x = 0; x < sx; x++) {
                 mapa[y][x] = 0;
                 CURRENT_MAPA_SOLIDS[y][x] = -1;
                 CURRENT_MAPA_CEIL[y][x] = -1;
-                $("#MapHolder").append(generateItemClickable(x,y,0));
-                $("#MapHolder_Walkables").append(generateItemWalkable(x,y,0));
-                $("#MapHolder_Solidos").append(generateItemSolid(x,y,-1));
-                $("#MapHolder_SolidosCeil").append(generateItemSolidCeil(x,y,-1));
+                CURRENT_MAPA_INTERACTIVOS[y][x] = -1;
+                $("#MapHolder").append(generateItemClickable(x, y, 0));
+                $("#MapHolder_Walkables").append(generateItemWalkable(x, y, 0));
+                $("#MapHolder_Solidos").append(generateItemSolid(x, y, -1));
+                $("#MapHolder_SolidosCeil").append(generateItemSolidCeil(x, y, -1));
+                $("#MapHolder_Interactivos").append(generateItemInteractivo(x, y, -1));
             }
         }
     }
+
     function InitWithData(p_mapa) {
         mapa = p_mapa;//{{ mapa }};
         var sy = mapa.length;
@@ -313,94 +426,134 @@
         $("#MapHolder").empty();
         $("#MapHolder_Walkables").empty();
         $("#MapHolder_Solidos").empty();
-        for(var y=0;y<sy;y++){
-            for(var x=0;x<sx;x++){
-                $("#MapHolder_Walkables").append(generateItemWalkable(x,y,mapa[y][x]));
-                $("#MapHolder_Solidos").append(generateItemSolid(x,y,CURRENT_MAPA_SOLIDS[y][x]));
-                $("#MapHolder_SolidosCeil").append(generateItemSolidCeil(x,y,CURRENT_MAPA_CEIL[y][x]));
-                $("#MapHolder").append(generateItemClickable(x,y,mapa[y][x]));
+        $("#MapHolder_SolidosCeil").empty();
+        $("#MapHolder_Interactivos").empty();
+        AUTO_ID=0;
+        for (var y = 0; y < sy; y++) {
+            for (var x = 0; x < sx; x++) {
+                $("#MapHolder_Walkables").append(generateItemWalkable(x, y, mapa[y][x]));
+                $("#MapHolder_Solidos").append(generateItemSolid(x, y, CURRENT_MAPA_SOLIDS[y][x]));
+                $("#MapHolder_SolidosCeil").append(generateItemSolidCeil(x, y, CURRENT_MAPA_CEIL[y][x]));
+                $("#MapHolder_Interactivos").append(generateItemInteractivo(x, y, CURRENT_MAPA_INTERACTIVOS[y][x]));
+                /*if(CURRENT_MAPA_INTERACTIVOS[y][x]!=-1){
+                    var val = CURRENT_MAPA_INTERACTIVOS[y][x].split(",");
+                    if(parseInt(val[1])>AUTO_ID){
+                        AUTO_ID=parseInt(val[1]);
+                    }
+                }*/
+                $("#MapHolder").append(generateItemClickable(x, y, mapa[y][x]));
             }
         }
     }
-    function generateItemClickable(x, y, tipo){
-        var r = '<div id="tileClickable-'+x+'-'+y+'" class="Tile '
-        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;"';
-        r+= 'onclick="clickOn('+x+','+y+')">' + '</div>';
+
+    function generateItemClickable(x, y, tipo) {
+        var r = '<div id="tileClickable-' + x + '-' + y + '" class="Tile '
+        r += '" style="' + 'left:' + (x * 30) + 'px;' + 'top:' + (y * 30) + 'px;"';
+        r += 'onclick="clickOn(' + x + ',' + y + ')">' + '</div>';
         return r;
     }
-    function generateItemWalkable(x, y, tipo){
-        var r = '<div id="tileWalkable-'+x+'-'+y+'" class="TileBase '
-        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
-        r+='background-color:'+WALKABLES_COLORS[(tipo+1)].colorId+';"'
-        r+= '</div>';
+
+    function generateItemWalkable(x, y, tipo) {
+        var r = '<div id="tileWalkable-' + x + '-' + y + '" class="TileBase '
+        r += '" style="' + 'left:' + (x * 30) + 'px;' + 'top:' + (y * 30) + 'px;';
+        r += 'background-color:' + WALKABLES_COLORS[(tipo + 1)].colorId + ';"'
+        r += '</div>';
         return r;
     }
-    function generateItemSolid(x, y, tipo){
-        var r = '<div id="tileSolid-'+x+'-'+y+'" class="TileBase '
-        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
-        if(tipo!=-1){
-            r+='background-image:URL('+SOLIDS_URLS[(tipo+1)].url+');"';
-        }else{
-            r+='"';
+
+    function generateItemSolid(x, y, tipo) {
+        var r = '<div id="tileSolid-' + x + '-' + y + '" class="TileBase '
+        r += '" style="' + 'left:' + (x * 30) + 'px;' + 'top:' + (y * 30) + 'px;';
+        if (tipo != -1) {
+            r += 'background-image:URL(' + SOLIDS_URLS[(tipo + 1)].url + ');"';
+        } else {
+            r += '"';
         }
-        r+= '</div>';
+        r += '</div>';
         return r;
     }
-    function generateItemSolidCeil(x, y, tipo){
-        var r = '<div id="tileSolidCeil-'+x+'-'+y+'" class="TileBase '
-        r+='" style="' + 'left:'+(x*30)+'px;' + 'top:'+(y*30)+'px;';
-        if(tipo!=-1){
-            r+='background-image:URL('+SOLIDS_URLS[(tipo+1)].url+');"';
-        }else{
-            r+='"';
+
+    function generateItemSolidCeil(x, y, tipo) {
+        var r = '<div id="tileSolidCeil-' + x + '-' + y + '" class="TileBase '
+        r += '" style="' + 'left:' + (x * 30) + 'px;' + 'top:' + (y * 30) + 'px;';
+        if (tipo != -1) {
+            r += 'background-image:URL(' + SOLIDS_URLS[(tipo + 1)].url + ');"';
+        } else {
+            r += '"';
         }
-        r+= '</div>';
+        r += '</div>';
         return r;
     }
+
+    function generateItemInteractivo(x, y, tipo) {
+        var r = '<div id="tileInteractivo-' + x + '-' + y + '" class="TileBase '
+        r += '" style="' + 'left:' + (x * 30) + 'px;' + 'top:' + (y * 30) + 'px;';
+        if (tipo != -1) {
+            var val = tipo.split(",");
+            r += 'background-image:URL(' + INTERACTIVOS_URLS[(parseInt(val[0]) + 1)].url + ');"';
+        } else {
+            r += '"';
+        }
+        r += '</div>';
+        return r;
+    }
+
     function selectWalkable(tipo) {
-        SelectedWalkable=tipo-1;
+        SelectedWalkable = tipo - 1;
         /*for(var i=0;i<2;i++){
             $("#brush"+i).removeClass("TileSelected")
         }*/
         $('[id*="walkable_brush"]').removeClass("TileSelected");
-        $("#walkable_brush"+tipo).addClass("TileSelected");
+        $("#walkable_brush" + tipo).addClass("TileSelected");
     }
+
     function selectSolid(tipo) {
-        SelectedSolid = tipo-1;
+        SelectedSolid = tipo - 1;
         $('[id*="solid_brush"]').removeClass("TileSelected");
-        $("#solid_brush"+tipo).addClass("TileSelected");
+        $("#solid_brush" + tipo).addClass("TileSelected");
     }
+
     function selectSolidCeil(tipo) {
-        SelectedCeil = tipo-1;
+        SelectedCeil = tipo - 1;
         $('[id*="solidceil_brush"]').removeClass("TileSelected");
-        $("#solidceil_brush"+tipo).addClass("TileSelected");
+        $("#solidceil_brush" + tipo).addClass("TileSelected");
     }
+
+    function selectInteractivo(tipo) {
+        SelectedInteractivo = tipo - 1;
+        $('[id*="interactivo_brush"]').removeClass("TileSelected");
+        $("#interactivo_brush" + tipo).addClass("TileSelected");
+    }
+
     function saveMap() {
-        if(STATUS == "DISABLED"){
+        if (STATUS == "DISABLED") {
             return;
         }
         var JSONmapa = JSON.stringify(mapa);
         var JSONmapaSolid = JSON.stringify(CURRENT_MAPA_SOLIDS);
         var JSONmapaSolidCeil = JSON.stringify(CURRENT_MAPA_CEIL);
+        var JSONmapaInteractivos = JSON.stringify(CURRENT_MAPA_INTERACTIVOS);
         $.ajax({
-            url : "mapeditor/savemap", // the endpoint
-            type : "POST", // http method
-            data : { 'mapa' : JSONmapa,
-                'mapasolids' : JSONmapaSolid,
-                'mapasolidsceil' : JSONmapaSolidCeil,
-                'id':CURRENT_PK,
+            url: "mapeditor/savemap", // the endpoint
+            type: "POST", // http method
+            data: {
+                'mapa': JSONmapa,
+                'mapasolids': JSONmapaSolid,
+                'mapasolidsceil': JSONmapaSolidCeil,
+                'mapainteractivos': JSONmapaInteractivos,
+                'id': CURRENT_PK,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
 
             // handle a successful response
-            success : function(json) {
+            success: function (json) {
                 //$('#post-text').val(''); // remove the value from the input
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
             },
 
             // handle a non-successful response
-            error : function(xhr,errmsg,err) {
+            error: function (xhr, errmsg, err) {
                 //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
@@ -409,87 +562,97 @@
     }
 
 
-    function loadMapaData(id){
+    function loadMapaData(id) {
         $.ajax({
-            url : "mapeditor/loadmap", // the endpoint
-            type : "POST", // http method
-            data : { 'id' : id,
+            url: "mapeditor/loadmap", // the endpoint
+            type: "POST", // http method
+            data: {
+                'id': id,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
 
             // handle a successful response
-            success : function(json) {
+            success: function (json) {
                 //$('#post-text').val(''); // remove the value from the input
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
-                if(json.result=="Loaded"){
+                if (json.result == "Loaded") {
                     CURRENT_PK = json.pk;
                     CURRENT_NAME = json.name;
                     CURRENT_MAPA_SOLIDS = $.parseJSON(json.mapasolids);
                     CURRENT_MAPA_CEIL = $.parseJSON(json.mapasolidsceil);
+                    CURRENT_MAPA_INTERACTIVOS = $.parseJSON(json.mapainteractivos);
                     InitWithData($.parseJSON(json.mapa));
                     STATUS = "LOADED";
                 }
             },
 
             // handle a non-successful response
-            error : function(xhr,errmsg,err) {
+            error: function (xhr, errmsg, err) {
                 //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
     }
+
     function createMap() {
         var name = $("#NewMapName").val();
-        if(name == "" || name == undefined){
+        if (name == "" || name == undefined) {
             return;
         }
         var sy = 10;
         var sx = 10;
-        var tmpmap= new Array(sy);
-        var tmpmapSolids= new Array(sy);
-        var tmpmapSolidsCeil= new Array(sy);
-        for(var y=0;y<sy;y++){
+        var tmpmap = new Array(sy);
+        var tmpmapSolids = new Array(sy);
+        var tmpmapSolidsCeil = new Array(sy);
+        var tmpmapInteractivos = new Array(sy);
+        for (var y = 0; y < sy; y++) {
             tmpmap[y] = new Array(sx);
             tmpmapSolids[y] = new Array(sx);
             tmpmapSolidsCeil[y] = new Array(sx);
-            for(var x=0;x<sx;x++){
+            tmpmapInteractivos[y] = new Array(sx);
+            for (var x = 0; x < sx; x++) {
                 tmpmap[y][x] = 0;
                 tmpmapSolids[y][x] = -1;
                 tmpmapSolidsCeil[y][x] = -1;
+                tmpmapInteractivos[y][x] = -1;
             }
         }
         var JSONmapa = JSON.stringify(tmpmap);
         var JSONmapaSolids = JSON.stringify(tmpmapSolids);
         var JSONmapaSolidsCeil = JSON.stringify(tmpmapSolidsCeil);
+        var JSONmapaInteractivos = JSON.stringify(tmpmapInteractivos);
         $.ajax({
-            url : "mapeditor/creamap", // the endpoint
-            type : "POST", // http method
-            data : { 'mapa' : JSONmapa,
-                'mapasolids' : JSONmapaSolids,
-                'mapasolidsceil' : JSONmapaSolidsCeil,
-                'name':name,
+            url: "mapeditor/creamap", // the endpoint
+            type: "POST", // http method
+            data: {
+                'mapa': JSONmapa,
+                'mapasolids': JSONmapaSolids,
+                'mapasolidsceil': JSONmapaSolidsCeil,
+                'mapainteractivos': JSONmapaInteractivos,
+                'name': name,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             }, // data sent with the post request
 
             // handle a successful response
-            success : function(json) {
+            success: function (json) {
                 //$('#post-text').val(''); // remove the value from the input
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
-                if(json.result=="Created"){
+                if (json.result == "Created") {
                     CURRENT_PK = json.pk;
                     CURRENT_NAME = json.name;
                     CURRENT_MAPA_SOLIDS = $.parseJSON(json.mapasolids);
                     CURRENT_MAPA_CEIL = $.parseJSON(json.mapasolidsceil);
+                    CURRENT_MAPA_INTERACTIVOS = $.parseJSON(json.mapainteractivos);
                     InitWithData($.parseJSON(json.mapa));
                     STATUS = "LOADED";
                 }
             },
 
             // handle a non-successful response
-            error : function(xhr,errmsg,err) {
+            error: function (xhr, errmsg, err) {
                 //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                 //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console

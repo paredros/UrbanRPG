@@ -8,11 +8,13 @@ def Mapeditor(request):
     list = MapWorld.objects.all().values('pk','mapName')
     walkables = Walkables.objects.all()
     solids = Solids.objects.all()
+    interactivos = Interactivos.objects.all()
     print(list)
     #return render(request, 'editor/mapeditor.html', {'mapa':data.mapData, 'mapsList':list})
     return render(request, 'editor/mapeditor.html', {'mapsList':list,
                                                      'walkables':walkables,
-                                                     'solids':solids
+                                                     'solids':solids,
+                                                     'interactivos':interactivos
                                                      })
 
 def multiply(value, arg):
@@ -22,6 +24,7 @@ def SaveMap(request):
     if request.method == 'POST':
         mapa = request.POST.get('mapa')
         mapSolids = request.POST.get('mapasolids')
+        mapInteractivos = request.POST.get('mapainteractivos')
         mapSolidsCeil = request.POST.get('mapasolidsceil')
         mapaid = request.POST.get('id')
         print(mapa)
@@ -29,7 +32,7 @@ def SaveMap(request):
 
         #post = Post(text=post_text, author=request.user)
         #post.save()
-        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil)
+        MapWorld.objects.filter(pk=mapaid).update(mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil, mapInteractivos=mapInteractivos)
 
         response_data['result'] = 'Paso!'
         #response_data['postpk'] = post.pk
@@ -52,6 +55,7 @@ def LoadMap(request):
         response_data['mapa'] = data.mapData
         response_data['mapasolids'] = data.mapSolids
         response_data['mapasolidsceil'] = data.mapSolidsCeil
+        response_data['mapainteractivos'] = data.mapInteractivos
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)
@@ -63,8 +67,9 @@ def CreateMap(request):
         mapa = request.POST.get('mapa')
         mapSolids = request.POST.get('mapasolids')
         mapSolidsCeil = request.POST.get('mapasolidsceil')
+        mapInteractivos = request.POST.get('mapainteractivos')
         name = request.POST.get('name')
-        data = MapWorld.objects.create(mapName=name, mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil)
+        data = MapWorld.objects.create(mapName=name, mapData=mapa, mapSolids=mapSolids, mapSolidsCeil=mapSolidsCeil, mapInteractivos=mapInteractivos)
 
         response_data = {}
         response_data['result'] = 'Created'
@@ -72,6 +77,7 @@ def CreateMap(request):
         response_data['mapa'] = data.mapData
         response_data['mapasolids'] = data.mapSolids
         response_data['mapasolidsceil'] = data.mapSolidsCeil
+        response_data['mapainteractivos'] = data.mapInteractivos
         response_data['name'] = data.mapName
 
         return JsonResponse(response_data)
